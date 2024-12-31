@@ -4,4 +4,5 @@ export class ProductDTO {
   category: string;
   area: string;
   createdAt: Date;
+  orderCount?: number;
 }
