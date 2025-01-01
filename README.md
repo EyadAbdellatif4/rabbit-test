@@ -1,81 +1,103 @@
+# NestJS Project Setup Guide
 
-# Rabbit Coding Challenge
-
-## Objective
-
-The goal of this task is to evaluate your coding abilities and assess your understanding of business requirements by simulating a real-world scenario at Rabbit. This task is designed to test your skills in developing a feature for Rabbit while also optimizing existing code for performance. The task should take no more than 3-4 hours to complete.
-
-Please ensure that the code you write is production-ready. If you make any compromises or assumptions during the task, document them. Be clear about any steps you'd take if you had more time to improve the solution.
+This guide provides step-by-step instructions for setting up and running a NestJS project that uses Yarn, MySQL, and Prisma.
 
 ---
 
-## Business Context
+## **Prerequisites**
 
-Rabbit operates multiple stores across the region, processing thousands of orders each day across various locations. The company is working to enhance its system to provide a better user experience for customers.
+Before starting, ensure you have the following installed:
 
----
+### 1. Node.js
+- Download and install Node.js from [nodejs.org](https://nodejs.org).
+- Verify the installation by running:
+  ```bash
+  node -v
+  npm -v
+2. Yarn
+Install Yarn globally using npm:
+bash
+Copy code
+npm install --global yarn
+3. MySQL
+Download and install MySQL from mysql.com.
+Configure MySQL with the following details:
+Database Name
+Username
+Password
+Port
+Ensure the MySQL server is running.
+Project Setup
+1. Clone the Repository
+Open a terminal and navigate to the directory where you want to clone the project.
+Clone the repository by running:
+bash
+Copy code
+git clone <your-repo-url>
+2. Navigate to the Project Directory
+Move into the project folder:
+bash
+Copy code
+cd <project-folder-name>
+3. Install Dependencies
+Install the required Node.js modules:
+bash
+Copy code
+yarn install
+4. Configure Environment Variables
+Copy the .env file provided in your email into the project directory.
+Ensure the .env file contains the following variables:
+env
+Copy code
+DATABASE_URL= url
+MYSQL_DATABASE= database
+MYSQL_USER= user
+MYSQL_PASSWORD= password
+MYSQL_HOST= host
+MYSQL_PORT= port
 
-## Requirements
+PUSHOVER_USER_KEY= key
+PUSHOVER_APP_TOKEN= token
+Replace the placeholder values with your actual configuration.
+Database Setup
+1. Run Prisma Migrations
+Use Prisma to create the necessary tables in your MySQL database:
+bash
+Copy code
+npx prisma migrate dev
+2. Seed the Database
+If a seed script exists (e.g., prisma/seed.ts), populate the database with initial data:
+bash
+Copy code
+npx prisma db seed
+3. Generate Prisma Client
+Ensure Prisma is up-to-date by generating the Prisma client:
+bash
+Copy code
+npx prisma generate
+Running the Project
+Start the Development Server
+Start the server in development mode by running:
+bash
+Copy code
+yarn start:dev
+This command will start the server and watch for file changes.
+Testing the API
+Available Endpoints
+Use Postman or any HTTP client to test the following endpoints:
+Get All Products
 
-### 1. **Top 10 Most Frequently Ordered Products API**
+URL: http://localhost:8080/product
+Method: GET
+Get Product by ID
 
-- Develop an API that returns the **top 10 most frequently ordered products** in a specific area. The area can be identified based on the location or region.
-- This API will be integrated into a mobile application and displayed on the user’s home screen.
-- The API should be designed to handle millions of requests efficiently, as Rabbit’s homepage experiences significant traffic.
+URL: http://localhost:8080/product/:id
+Method: GET
+Get Top 10 Products in a Specific Area
 
-### 2. **Optimizing a Poorly Implemented List Products API**
+URL: http://localhost:8080/product/top-ordered?area=Zayed
+Method: GET
+Get All Orders
 
-- There is an existing API to list products (/products), but it has **poor performance** due to inefficient database queries and bad code practices. You are tasked with reviewing and optimizing this API for better performance.
-- Feel free to change the API response and request contracts (eg. DTO, Filters, ..etc) for the seek of making the API more efficient and reliable
-- Refactor and improve the performance of the current implementation to ensure it can handle large-scale traffic efficiently.
-
----
-
-## Technical Requirements
-
-### 1. **Environment Setup**
-
-- Install **Node.js** (version 20 or higher).
-- Set up any **SQL database** (such as PostgreSQL or MySQL) to store product and order information.
-- Review and understand the dependencies in the provided `package.json`. Identify libraries you may use to improve performance.
-- Run `yarn prisma:generate`
-- Run `yarn migrate:dev`
-- Run `yarn seed`
-
-### 2. **Test Cases**
-
-- Write the necessary test cases to ensure the correctness of your implementation.
-- Ensure that the **API for fetching the top 10 most ordered products** is accurate and performs as expected.
-
-### 3. **Documentation**
-
-- Document any **assumptions** made during the task.
-- If you had more time, describe additional optimizations you would consider.
-
----
-
-## Bonus Points (Optional)
-
-- If you have more time, consider **integration with any notification library** (e.g., **Pushover**) to receive notifications after a new order is created.
-
----
-
-## Submission Instructions
-
-- Ensure your code is clean, modular, and easy to maintain.
-- Provide clear instructions on how to set up and run your code.
-- Commit and push your work to a public repository (GitHub or GitLab), and provide a link to the repository.
-
----
-
-## Evaluation Criteria
-
-- Code quality, modularity, and readability.
-- Efficient handling of performance-related issues.
-- Proper handling of database queries and optimizations.
-- Correctness of the implemented solution.
-- Documentation of assumptions and possible improvements.
-
----
-
-Good luck with the challenge! We look forward to reviewing your submission.
+URL: http://localhost:8080/order
+Method: GET
