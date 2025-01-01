@@ -5,14 +5,14 @@ import {
 } from '@nestjs/common';
 import { ProductRepository } from './product.repository';
 import { GetAllProductsDTO } from './dto/get-all-products.dto';
-import { ProductDTO } from './dto/product.dto';
+import type { Product } from '@prisma/client';
 import { GetTopProductsDTO } from './dto/get-top-products.dto';
 
 @Injectable()
 export class ProductService {
   constructor(private readonly productsRepository: ProductRepository) {}
 
-  async getAllProducts(filters: GetAllProductsDTO): Promise<ProductDTO[]> {
+  async getAllProducts(filters: GetAllProductsDTO): Promise<Product[]> {
     try {
       const products = await this.productsRepository.findAll(filters);
 
@@ -33,7 +33,7 @@ export class ProductService {
     }
   }
 
-  async getProductById(id: number): Promise<ProductDTO> {
+  async getProductById(id: number): Promise<Product> {
     try {
       const product = await this.productsRepository.findById(id);
       if (!product) {
@@ -54,7 +54,7 @@ export class ProductService {
 
   async getTopOrderedProducts(
     filters: GetTopProductsDTO,
-  ): Promise<ProductDTO[]> {
+  ): Promise<Product[]> {
     try {
       const products = await this.productsRepository.findTopOrderedProducts(
         filters.area,
