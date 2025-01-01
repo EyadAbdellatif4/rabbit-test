@@ -5,6 +5,7 @@ import {
   Query,
   BadRequestException,
   UseInterceptors,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ProductService } from './product.service';
@@ -18,13 +19,25 @@ export class ProductController {
   @Get('top-ordered')
   @UseInterceptors(CacheInterceptor)
   async getTopOrderedProducts(@Query() filters: GetTopProductsDTO) {
-    return this.productsService.getTopOrderedProducts(filters);
+    try {
+      return await this.productsService.getTopOrderedProducts(filters);
+    } catch (error) {
+      console.error('Error in getTopOrderedProducts:', error);
+      throw new InternalServerErrorException(
+        'Failed to retrieve top ordered products',
+      );
+    }
   }
 
   @Get()
   @UseInterceptors(CacheInterceptor)
   async getAllProducts(@Query() filters: GetAllProductsDTO) {
-    return this.productsService.getAllProducts(filters);
+    try {
+      return await this.productsService.getAllProducts(filters);
+    } catch (error) {
+      console.error('Error in getAllProducts:', error);
+      throw new InternalServerErrorException('Failed to retrieve products');
+    }
   }
 
   @Get(':id')
@@ -34,6 +47,11 @@ export class ProductController {
     if (isNaN(productId)) {
       throw new BadRequestException('Invalid product ID');
     }
-    return this.productsService.getProductById(productId);
+    try {
+      return await this.productsService.getProductById(productId);
+    } catch (error) {
+      console.error(`Error in getProductById for ID ${id}:`, error);
+      throw new InternalServerErrorException('Failed to retrieve product');
+    }
   }
 }

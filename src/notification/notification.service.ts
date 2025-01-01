@@ -1,34 +1,37 @@
-import { Injectable } from '@nestjs/common';
-const Pushover = require('pushover-notifications');
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Observable, catchError } from 'rxjs';
+import axios, { AxiosRequestConfig } from 'axios';
 
 @Injectable()
 export class NotificationService {
-  private pushover: any;
+  constructor(private readonly http: HttpService) {}
 
-  constructor() {
-    this.pushover = new Pushover({
-      user: process.env.PUSHOVER_USER_KEY,
-      token: process.env.PUSHOVER_APP_TOKEN,
-    });
-  }
-
-  async sendNotification(
+  sendPushoverNotification(
+    token: string,
+    user: string,
     message: string,
-    userKeys: string | string[],
-  ): Promise<void> {
-    if (typeof userKeys === 'string') {
-      userKeys = [userKeys];
-    }
-    for (const key of userKeys) {
-      try {
-        await this.pushover.send({
-          message: message,
-          user: key,
-          // other options
-        });
-      } catch (error) {
-        console.error(`Failed to send notification to user ${key}:`, error);
-      }
-    }
+  ): Observable<any> {
+    const url = 'https://api.pushover.net/1/messages.json';
+    const data = new URLSearchParams();
+    data.append('token', token);
+    data.append('user', user);
+    data.append('message', message);
+
+    const config: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    return this.http.post(url, data.toString(), config).pipe(
+      catchError((error) => {
+        console.error('Error sending Pushover notification:', error);
+        throw new HttpException(
+          'Failed to send notification',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }),
+    );
   }
 }
